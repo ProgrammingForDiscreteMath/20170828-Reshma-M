@@ -1,4 +1,6 @@
-from math import sqrt
+from __future__ import division
+from math import sqrt, pi, atan, log
+
 class ComplexNumber:
     """
     The class of complex numbers.
@@ -35,6 +37,17 @@ class ComplexNumber:
         Return the sum of ``self`` and ``other``.
         """
         return ComplexNumber(self.real + other.real, self.imaginary + other.imaginary)
+    def product(self, other):
+        """
+        Return the product of ``self`` and ``other``
+        """
+        return ComplexNumber(self.real * other.real + self.imaginary * other.imaginary, self.imaginary * other.real + self.real * other.imaginary)
+    def complex_conjugate(self):
+        """
+        Replaces the instance by it's complex conjugate
+        """
+        self.imaginary = - self.imaginary
+        
 
 class NonZeroComplexNumber(ComplexNumber):
     def __init__(self, real_part, imaginary_part):
@@ -50,3 +63,25 @@ class NonZeroComplexNumber(ComplexNumber):
         """
         den = self.real**2 + self.imaginary**2
         return NonZeroComplexNumber(self.real/den, -self.imaginary/den)
+    def polar_coordinates(self):
+        """
+        Returns the polar coordinates of the complex number
+        """
+        r = sqrt(self.real**2 + self.imaginary**2)
+        try:
+            if self.real > 0:
+                theta = atan(self.imaginary/self.real)
+            elif self.real < 0:
+                theta = atan(self.imaginary/self.real) + pi
+        except ZeroDivisionError:
+            if self.imaginary != 0:
+                theta = pi/2
+            else:
+                raise ValueError("Origin does not have a well-defined polar coordinates")
+        return r, theta
+    def logarithm(self):
+        """
+        Return the principal branch of the log
+        """
+        sr, st = self.polar_coordinates()
+        return ComplexNumber(log(sr),st)
